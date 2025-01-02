@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ürünler Sayfası</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="urunler.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="byshoes.jpg" alt="Logo">
+        </div>
+        <div class="admin-profile">
+            <img src="profil.jpeg" alt="Yönetici Profil Resmi" class="profile-pic">
+            <p class="admin-name">Beyza Meriç</p>
+        </div>
+        <hr class="divider">
+        <ul>
+            <li><a href="arayuz.html"><i class="fas fa-home"></i> ANASAYFA</a></li>
+            <li><a href="urunler.html"><i class="fas fa-box"></i> ÜRÜNLER</a></li>
+            <li><a href="iadeler.html"><i class="fas fa-undo"></i> İADELER</a></li>
+            <li><a href="satışlar.html"><i class="fas fa-dollar-sign"></i> SATIŞLAR</a></li>
+        </ul>
+        <a href="giris.html" class="logout-btn">Çıkış Yap</a>
+    </div>
+    <div class="main-content"></div>
+
+    <div class="container">
+        <section class="product-grid">
+            <!-- Ürünler JavaScript ile yüklenecek -->
+        </section>        
+
+        <script>
+            const productImages = {
+        1: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1025/product/media/images/prod/SPM/PIM/20231026/13/fff79afc-6fb5-38d3-b33e-a9889903df1f/1_org_zoom.jpg",
+        6: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1024/product/media/images/prod/SPM/PIM/20231026/13/31004f09-0e61-3d88-aff8-698a457337be/1_org_zoom.jpg",
+        11: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1587/prod/QC/20241018/10/a5d5cf55-5612-39fb-a51a-2d9888608beb/1_org_zoom.jpg",
+        16: "https://cdn.dsmcdn.com/ty1588/prod/QC/20241018/10/88e3fcb9-026d-3925-85b2-7abf176eec47/1_org_zoom.jpg",
+        21: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1491/product/media/images/prod/QC/20240820/19/07e06cfa-0a4e-3ff9-8fc5-7ace690d8902/1_org_zoom.jpg",
+        26: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1099/product/media/images/prod/SPM/PIM/20231220/18/ab2c111a-2c8a-3c93-9561-ca1e7129f07e/1_org_zoom.jpg",
+        31: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1588/prod/QC/20241018/10/fe0abaf1-f4f7-3e6c-9092-30fac33bc94f/1_org_zoom.jpg",
+        36: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1589/prod/QC/20241018/10/8078c4b9-1792-3fbe-bf16-01d8cd9c13de/1_org_zoom.jpg",
+        41: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1065/product/media/images/prod/SPM/PIM/20231126/16/32213250-020d-359d-a40d-958b4d5fc02c/1_org_zoom.jpg",
+        46: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1066/product/media/images/prod/SPM/PIM/20231126/16/7764f8bf-f15d-3fe5-89e8-c6202c7a7f7b/1_org_zoom.jpg",
+        51: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1491/product/media/images/prod/QC/20240820/19/1600b9b3-1de1-33e0-81c3-89a91ad73542/1_org_zoom.jpg",
+        56: "https://cdn.dsmcdn.com/mnresize/1200/1800/ty1148/product/media/images/prod/SPM/PIM/20240125/20/75df5b01-3c88-3471-abd6-de8dc7276050/1_org_zoom.jpg"
+            };
+        
+            async function fetchProducts() {
+                try {
+                    const response = await fetch('http://localhost:3000/urunler');
+                    if (!response.ok) {
+                        throw new Error(`API Hatası: ${response.status}`);
+                    }
+        
+                    const products = await response.json();
+                    console.log('Ürünler:', products);
+        
+                    const productGrid = document.querySelector('.product-grid');
+                    productGrid.innerHTML = '';
+
+                    products.forEach(product => {
+         const imageUrl = productImages[product.urun_id] || "https://via.placeholder.com/200";
+        const isTopSeller = product.urun_ad.toLowerCase().includes('siyah postal bot'); 
+        const productItem = `
+        <div class="product-item">
+            ${isTopSeller ? `
+                <div class="top-seller-badge">
+                    <i class="fas fa-star"></i> En Çok Satan
+                </div>
+            ` : ''}
+            <img src="${imageUrl}" alt="${product.urun_ad}">
+            <p class="desciription"><b>${product.urun_ad}</b></p>
+            <p class="shoe-number">Numaralar: ${product.bedenler}</p>
+            <p class="price">Fiyat: ${product.fiyat} TL</p>
+        </div>
+    `;
+    productGrid.innerHTML += productItem;
+});
+
+                } catch (error) {
+                    console.error('Fetch hatası:', error);
+                }
+            }
+        
+            window.onload = fetchProducts;
+        </script>
+</body>
+</html>

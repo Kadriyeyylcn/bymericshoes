@@ -1,0 +1,137 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    margin-left: 172px;
+}
+
+.sidebar {
+    width: 172px; 
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.sidebar .logo img {
+    width: 160px;
+    height: 150px;
+    margin-bottom: 70px;
+    margin-top: 30px;
+    border-radius: 50%;
+}
+
+.divider {
+    width: 150px;
+    background-color: #555;
+    border: 0;
+    height: 1px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.sidebar ul li {
+    width: 100%;
+    text-align: center;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 15px;
+    display: block;
+}
+
+.sidebar ul li a:hover {
+    background-color: #555;
+}
+
+.main-content {
+    padding: 20px;
+    width: 100%;
+    background-color: transparent;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 10px;
+    text-align: center;
+}
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.chart {
+    margin-bottom: 20px;
+}
+.pie-charts {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        gap: 10px; 
+        margin: 20px 0;
+    }
+    .admin-profile {
+        display: flex; 
+        align-items: center; 
+        margin-bottom: 20px; 
+        margin-top: 0px;
+    }
+    
+    .profile-pic {
+        width: 30px; 
+        height: 30px;
+        border-radius: 50%; 
+        margin-right: 5px; 
+        object-fit: cover; 
+    }
+    
+    .admin-name {
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        margin: 0;
+    }
+    .logout-btn {
+        margin-top: auto; 
+        color: white;
+        font-size: 9px;
+        text-decoration: none;
+        background-color: #555; 
+        padding: 3px 8px;
+        margin-left: 90px;
+        margin-bottom: 25px;
+        border-radius:4px;
+    }
+    
+    .logout-btn:hover {
+        background-color: #333; 
+    }
+    
+
+    
+

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İadeler Analizi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="iadeler.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+       google.charts.load('current', { packages: ['corechart'] });
+       google.charts.setOnLoadCallback(() => fetchAndDrawCharts());
+
+        async function initCharts() {
+        await fetchAndDrawCharts(); // Grafikleri çiz
+}
+        async function fetchData(endpoint) {
+            const response = await fetch(endpoint);
+            const data = await response.json();
+            console.log(`Endpoint: ${endpoint}`, data); // Veriyi kontrol et
+            return data;
+        }
+
+        function drawLineChart(data, year) {
+            const chartData = [['Ürünler', 'Satış Miktarı', 'İade Oranı']];
+            data.forEach(item => {
+                chartData.push([
+                    item.urun,
+                    year === '2023' ? Number(item.toplam_satis_2023) : Number(item.toplam_satis_2024),
+                    year === '2023' ? Number(item.iade_orani_2023) : Number(item.iade_orani_2024)
+                ]);
+            });
+
+            const googleData = google.visualization.arrayToDataTable(chartData);
+
+            const options = {
+                title: `${year} Yılı Ürünlerin Satış Miktarı Ve İade Oranı`,
+                curveType: 'function',
+                legend: { position: 'bottom' },
+                backgroundColor: 'transparent',
+                series: { 
+                    0: { color: '#9C640C' }, 
+                    1: { color: '#27AE60' }
+                },
+                vAxis: {
+                viewWindow: { min: 0 }, 
+           },
+                hAxis: {
+             textStyle: {
+             fontSize: 10  
+            }
+          }
+            };
+
+            const chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            chart.draw(googleData, options);
+        }
+
+        function drawSecondLineChart(predictionData) {
+    const chartData = [['Ürünler', ' 2025 Yılı Tahmini Satış Miktarı', ' 2025 Tahmini İade Oranı']];
+
+    predictionData.forEach(item => {
+        chartData.push([
+            item.urun,
+            parseFloat(item.tahmini_satis_2025),       // Sayıya çeviriyoruz
+            parseFloat(item.tahmini_iade_orani_2025)   // Sayıya çeviriyoruz
+        ]);
+    });
+
+    console.log('Grafik İçin Veri:', chartData);
+
+    const googleData = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+        title: '2025  Yılı Ürünlerin Tahminilenen Satış Miktarı Ve Tahminilenen İade Oranı',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        backgroundColor: 'transparent',
+        series: { 
+            0: { color: '#F06292' }, 
+            1: { color: '#00ACC1' }
+        },
+        vAxis: {
+        viewWindow: { min: 0 }, 
+    },
+        hAxis: {
+       textStyle: {
+       fontSize: 10  
+       }
+          }
+    };
+    const chartElement = document.getElementById('second_line_chart');
+    if (chartElement) {
+        const chart = new google.visualization.LineChart(chartElement);
+        chart.draw(googleData, options);
+    } else {
+        console.error('Grafik container bulunamadı!');
+    }
+}
+function drawPieChart(data, predictionSummary) {
+    const chartData = [['Yıllar', 'İade Sayısı']];
+
+    data.forEach(item => {
+        chartData.push([item.yil, Number(item.toplam_iade)]);
+    });
+
+    if (predictionSummary && predictionSummary[0]) {
+        chartData.push(['2025', Number(predictionSummary[0].tahmini_iade_orani)]);
+    }
+
+    console.log('Daire Grafik Verisi:', chartData);
+
+    const googleData = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+        title: 'İşletmenin Yıllık İade Oranları (2025 Yılı Tahmini İade Oranı İle Birlikte)',
+        pieHole: 0.4,
+        backgroundColor: 'transparent',
+        colors: ['#F57F17', '#B35700', '#F4D03F'] 
+    };
+
+    const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    chart.draw(googleData, options);
+}
+function drawMonthlyPieChart(data, year) {
+    const chartData = [['Aylar', 'İade Oranı']];
+
+    data.forEach(item => {
+        chartData.push([item.ay, parseFloat(item.iade_orani || item.tahmini_iade_orani)]);
+    });
+
+    const googleData = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+        title: `${year} Yılı Aylık İade Oranları`,
+        pieHole: 0.4,
+        backgroundColor: 'transparent',
+        colors: ['#FF8A65', '#4FC3F7', '#A5D6A7', '#FFD54F', '#BA68C8', '#90A4AE', '#F48FB1']
+    };
+
+    const chart = new google.visualization.PieChart(document.getElementById('monthly_pie_chart'));
+    chart.draw(googleData, options);
+}
+
+        async function fetchAndDrawCharts() {
+           const selectedLineYear = document.getElementById('year-select').value;
+           const selectedPieYear = document.getElementById('year-select-pie').value;
+
+            const returnsData = await fetchData('/iade/returns-data');
+            const summaryData = await fetchData('/iade/returns-summary');
+            const predictionData = await fetchData('/iade/returns-prediction');
+            const predictionSummary = await fetchData('/iade/returns-prediction-summary');
+            const monthlyData = await fetchData(`/iade/monthly-returns/${selectedPieYear}`);
+
+            console.log('Tahmini Veriler:', predictionData); 
+
+
+            drawLineChart(returnsData, selectedLineYear);
+            drawSecondLineChart(predictionData);
+            drawPieChart(summaryData, predictionSummary);
+            drawMonthlyPieChart(monthlyData, selectedPieYear);
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+    // Çizgi grafiği için
+    document.getElementById('year-select').addEventListener('change', async () => {
+        const selectedLineYear = document.getElementById('year-select').value;
+        const returnsData = await fetchData('/iade/returns-data');
+        drawLineChart(returnsData, selectedLineYear);
+    });
+
+    // Daire grafiği için
+    document.getElementById('year-select-pie').addEventListener('change', async () => {
+        const selectedPieYear = document.getElementById('year-select-pie').value;
+        const monthlyData = await fetchData(`/iade/monthly-returns/${selectedPieYear}`);
+        drawMonthlyPieChart(monthlyData, selectedPieYear);
+    });
+});
+
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="byshoes.jpg" alt="Logo">
+        </div>
+        <div class="admin-profile">
+            <img src="profil.jpeg" alt="Yönetici Profil Resmi" class="profile-pic">
+            <p class="admin-name">Beyza Meriç</p>
+        </div>
+        <hr class="divider">
+        <ul>
+            <li><a href="arayuz.html"><i class="fas fa-home"></i> ANASAYFA</a></li>
+            <li><a href="urunler.html"><i class="fas fa-box"></i> ÜRÜNLER</a></li>
+            <li><a href="iadeler.html"><i class="fas fa-undo"></i> İADELER</a></li>
+            <li><a href="satışlar.html"><i class="fas fa-dollar-sign"></i> SATIŞLAR</a></li>
+        </ul>
+        <a href="giris.html" class="logout-btn">Çıkış Yap</a>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <div class="selector">
+                <label for="year-select">Yıl Seçin:</label>
+                <select id="year-select">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <div class="chart" id="curve_chart" style="width: 1100px; height: 390px;"></div>
+                <div class="chart" id="second_line_chart" style="width: 1100px; height: 390px;"></div>
+            </div>
+            <div class="selector">
+                <label for="year-select-pie">Yıl Seçin:</label>
+                <select id="year-select-pie">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            <div class="pie-charts">
+                <div id="piechart" class="chart" style="width: 1100px; height: 500px;"></div>
+                <div id="monthly_pie_chart" class="chart" style="width: 1200px; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

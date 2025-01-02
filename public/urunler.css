@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin-left: 172px; 
+}
+
+.sidebar {  
+    width: 172px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0; 
+}
+
+.sidebar .logo img {
+    width: 160px;
+    height: 150px;
+    margin-bottom: 70px;
+    margin-top: 30px;
+    border-radius: 50%;
+}
+.divider{
+    width: 150px;
+    background-color: #555;
+    border:0;
+    height: 1px ;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.sidebar ul {
+    list-style-type: none;
+    width: 100%;
+}
+
+.sidebar ul li {
+    width: 100%;
+    text-align: center;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 15px;
+}
+.sidebar ul li a:hover {
+    background-color: 5;
+}
+.main-content {
+    padding: 20px;
+    width: 100%;
+    background-color: transparent;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.product-item {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 1px solid #ddd;
+}
+
+.product-item:hover {
+    transform: translateY(-5px); 
+}
+
+.top-seller-badge {
+    position: relative;
+    float: right;
+    background-color: #e5bf00; 
+    color: rgb(255, 255, 255);
+    font-size: 1opx;
+    font-weight: bold;
+    padding: 3px 5px;
+    border-radius: 5px;
+    margin-right: 0px ;
+}
+.product-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #ddd;
+   
+}
+.description{
+    font-size: 16px;
+    color: black;
+    margin-bottom: 8px;
+}
+
+.shoe-number {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #b35700; 
+}
+.admin-profile {
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 20px; 
+    margin-top: 0px;
+}
+
+.profile-pic {
+    width: 30px; 
+    height: 30px;
+    border-radius: 50%; 
+    margin-right: 5px; 
+    object-fit: cover; 
+}
+
+.admin-name {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+}
+.logout-btn {
+    margin-top: auto; 
+    color: white;
+    font-size: 9px;
+    text-decoration: none;
+    background-color: #555; 
+    padding: 3px 8px;
+    margin-left: 90px;
+    margin-bottom: 5px;
+    border-radius:4px;
+}
+
+.logout-btn:hover {
+    background-color: #333; 
+}
+

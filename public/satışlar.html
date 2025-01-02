@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satışlar Analizi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="satışlar.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="byshoes.jpg" alt="Logo">
+        </div>
+        <div class="admin-profile">
+            <img src="profil.jpeg" alt="Yönetici Profil Resmi" class="profile-pic">
+            <p class="admin-name">Beyza Meriç</p>
+        </div>
+        <hr class="divider">
+        <ul>
+            <li><a href="arayuz.html"><i class="fas fa-home"></i> ANASAYFA</a></li>
+            <li><a href="urunler.html"><i class="fas fa-box"></i> ÜRÜNLER</a></li>
+            <li><a href="iadeler.html"><i class="fas fa-undo"></i> İADELER</a></li>
+            <li><a href="satışlar.html"><i class="fas fa-dollar-sign"></i> SATIŞLAR</a></li>
+        </ul>
+        <a href="giris.html" class="logout-btn">Çıkış Yap</a>
+    </div>
+
+    <div class="main-content"></div>
+
+    <div class="container">
+        <p class="subtitle">(İlk tabloda 2023-2024 yılına ait ürünlerin verileri, ikinci tabloda ise 2025 yılına dair hesaplanmış tahmini ürün verileri verilmiştir.)</p>
+        <p class="subtitle highlight">(Satış bilgilerinden hesaplanan iade oranı ile en çok iade edilen ürünler)</p>
+
+        <div class="tablo-container">
+            <!-- İlk Tablo -->
+            <div class="tablo">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ürünler</th>
+                            <th>Toplam Satış Sayısı</th>
+                            <th>Net Satış Sayısı</th>
+                            <th>İade Sayısı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- İkinci Tablo -->
+            <div class="tablo">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ürünler</th>
+                            <th>Tahmini Satış Sayısı</th>
+                            <th>Tahmini Net Satış Sayısı</th>
+                            <th>Tahmini İade Sayısı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <p class="subtitle2">(Maliyet Analizi 2023 ortalama ürün fiyatı için:600tl,2024 ortalama ürün fiyatı için:610tl,2025 tahmini ortalama ürün fiyatı için:621tl olarak bulunmuş ve tablolarda gösterilen veriler kullanılarak hesaplanmıştır.)</p>
+
+        <div class="graph-and-financial">
+            <div id="columnchart_material" style="width: 800px; height: 500px; margin: 20px auto;"></div>
+            <div class="financial-data">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+        </div>
+        <div class="main-content">
+            <button class="update-button" onclick="toggleUpdateForm()">Ürün Güncelle/Sil</button>
+        
+            <div class="update-form" id="updateForm" style="display: none;">
+                <h3>Ürün Güncelle/Sil</h3>
+                <label for="product-select">Ürün:</label>
+                <select id="product-select"></select>
+                <label for="size-select">Beden:</label>
+                <select id="size-select">
+                    <option value="36">36</option>
+                    <option value="37">37</option>
+                    <option value="38">38</option>
+                    <option value="39">39</option>
+                    <option value="40">40</option>
+                </select>
+                <button onclick="removeProduct()">Ürünü Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        google.charts.load('current', {'packages': ['bar']});
+        async function fetchData() {
+    try {
+        const [revenueResponse, tableResponse, predictionResponse, predictionRevenueResponse,productListResponse] = await Promise.all([
+            fetch('/satis/revenue-chart'),
+            fetch('/satis/sales-table'),
+            fetch('/satis/prediction-table'),
+            fetch('/satis/revenue-prediction'),
+            fetch('/satis/product-list')
+        ]);
+
+        if (!revenueResponse.ok || !tableResponse.ok || !predictionResponse.ok || !predictionRevenueResponse.ok|| !productListResponse.ok) {
+            throw new Error('API hatası: Yanıtlarda sorun var.');
+        }
+
+        const revenueData = await revenueResponse.json();
+        const tableData = await tableResponse.json();
+        const predictionData = await predictionResponse.json();
+        const predictionRevenue = await predictionRevenueResponse.json();
+        const productList = await productListResponse.json();
+
+        console.log('Revenue Data:', revenueData);
+        console.log('Table Data:', tableData);
+        console.log('Prediction Data:', predictionData);
+        console.log('Prediction Revenue Data:', predictionRevenue);
+        console.log('Product List:', productList);
+
+        drawChart(revenueData, predictionRevenue);
+        populateTable(tableData);
+        populatePredictionTable(predictionData);
+        populateFinancialData(revenueData, predictionRevenue);
+        populateProductList(productList);
+
+    } catch (error) {
+        console.error('Veri çekme hatası:', error.message);
+    }
+}
+
+function drawChart(data, predictionRevenue) {
+    const chartArray = [['Yıllar', 'Net Ciro', 'Toplam Ciro']];
+
+    // 2023 ve 2024 verilerini ekle
+    data.forEach(item => {
+        chartArray.push([item.yil, parseFloat(item.net_ciro), parseFloat(item.toplam_ciro)]);
+    });
+
+    // 2025 verilerini ekle
+    if (predictionRevenue && predictionRevenue.tahmini_net_ciro && predictionRevenue.tahmini_toplam_ciro) {
+        chartArray.push([
+            '2025',
+            parseFloat(predictionRevenue.tahmini_net_ciro),
+            parseFloat(predictionRevenue.tahmini_toplam_ciro)
+        ]);
+    }
+
+    const googleData = google.visualization.arrayToDataTable(chartArray);
+
+    const options = {
+        chart: {
+            title: 'Maliyet Analizi Grafiği',
+            subtitle: '2023-2024 Yılları Verileri Ve 2025 Yılı Tahminlenen Veriler İle Hesaplanan Toplam Ciro ve Net Ciro Grafiği  ',
+        },
+        bars: 'vertical',
+        colors: ['#F57F17', '#B35700']
+    };
+
+    const chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+    chart.draw(googleData, google.charts.Bar.convertOptions(options));
+}
+function populateTable(data) {
+    const tableBody = document.querySelector('.tablo:nth-of-type(1) table tbody');
+    tableBody.innerHTML = '';
+
+    if (data.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="4">Veri bulunamadı</td></tr>`;
+
+        return;
+    }
+
+    data.forEach(row => {
+        const isHighlight = ['kadın krem desenli ayakkabı', 'kadın yeşil desenli ayakkabı'].includes(row.urun);
+
+        const tableRow = `
+    <tr class="${isHighlight ? 'highlight' : ''}">
+        <td>${row.urun}</td>
+        <td>${row.toplam_satis}</td>
+        <td>${row.net_satis}</td>
+        <td>${row.iade_sayisi}</td>
+    </tr>
+`;
+        tableBody.innerHTML += tableRow;
+    });
+}
+
+function populatePredictionTable(data) {
+    const tableBody = document.querySelector('.tablo:nth-of-type(2) table tbody');
+    tableBody.innerHTML = '';
+
+    if (data.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="4">Veri bulunamadı</td></tr>`;
+
+        return;
+    }
+
+    data.forEach(row => {
+        const isHighlight = row.urun === 'kadın yeşil desenli ayakkabı';
+        const tableRow = `
+    <tr class="${isHighlight ? 'highlight' : ''}">
+        <td>${row.urun}</td>
+        <td>${row.tahmini_satis}</td>
+        <td>${row.tahmini_net_satis}</td>
+        <td>${row.tahmini_iade}</td>
+    </tr>
+`;
+        tableBody.innerHTML += tableRow;
+    });
+}
+function formatNumber(number) {
+    if (typeof number !== 'number') number = parseFloat(number); 
+    return number.toLocaleString('tr-TR', { minimumFractionDigits: 0 }); 
+}
+function populateFinancialData(data, predictionRevenue) {
+    const financialData = document.querySelector('.financial-data');
+    financialData.innerHTML = ''; 
+
+    // 2023 ve 2024 verilerini ekleme
+    data.forEach(item => {
+        const revenueDifference = item.toplam_ciro - item.net_ciro;
+
+        const financialItem = `
+            <div class="finansal">
+                <p class="up"><span>▲</span> ${item.yil} Toplam Ciro: ${formatNumber(item.toplam_ciro)}</p>
+                <p class="up"><span>▲</span> ${item.yil} Net Ciro: ${formatNumber(item.net_ciro)}</p>
+                <p class="down"><span>▼</span> ${item.yil} İade Zararı: ${formatNumber(Math.abs(revenueDifference))}</p>
+            </div>
+        `;
+        financialData.innerHTML += financialItem;
+    });
+
+    // 2025 tahmini verilerini ekleme
+    if (predictionRevenue) {
+        const predictionItem = `
+            <div class="finansal">
+                <p class="up"><span>▲</span> 2025 Tahmini Toplam Ciro: ${formatNumber(predictionRevenue.tahmini_toplam_ciro)}</p>
+                <p class="up"><span>▲</span> 2025 Tahmini Net Ciro: ${formatNumber(predictionRevenue.tahmini_net_ciro)}</p>
+                <p class="down"><span>▼</span> 2025 Tahmini İade Zararı: ${formatNumber(predictionRevenue.tahmini_iade_zarari)}</p>
+            </div>
+        `;
+        financialData.innerHTML += predictionItem;
+    }
+}
+function toggleUpdateForm() {
+    const form = document.getElementById('updateForm');
+    if (form.style.display === 'block') {
+        form.style.display = 'none';
+    } else {
+        form.style.display = 'block';
+    }
+}
+
+function populateProductList(products) {
+    const productSelect = document.getElementById('product-select');
+    productSelect.innerHTML = ''; 
+
+    if (products.length === 0) {
+        productSelect.innerHTML = `<option value="">Ürün Bulunamadı</option>`;
+        return;
+    }
+
+    products.forEach(product => {
+        const option = document.createElement('option');
+        option.value = product.urun_id;
+        option.textContent = product.urun_ad;
+        productSelect.appendChild(option);
+    });
+}
+
+        window.onload = fetchData;
+</script>
+</body>
+</html>

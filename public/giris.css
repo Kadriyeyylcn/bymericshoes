@@ -1,0 +1,53 @@
+/* Genel ayarlar */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffe3e3, #ffe1e1);
+    background-image: url(https://cdn.dsmcdn.com/mnresize/1200/1800/ty1588/prod/QC/20241018/10/e3d822ba-1525-370f-aa2c-ba3c652c60b6/1_org_zoom.jpg);
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Login kutusunun ayarları */
+.login-container {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+}
+
+h2 {
+    color: hwb(0 0% 100% / 0.897);
+    margin-bottom: 20px;
+}
+
+/* Form ayarları */
+form input {
+    width: 100%;
+    padding: 5px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    width: 80%;
+    padding: 10px;
+    background-color: #b35a00;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #000000;
+}

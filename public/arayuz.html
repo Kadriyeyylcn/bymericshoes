@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gösterge Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="arayuz.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    throw new Error("HTTP Hatası! Durum: ${response.status}");
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Veri alınırken hata oluştu:', error);
+                return null;
+            }
+        }
+        async function drawCharts() {
+    const statsData = await fetchData('/arayuz/stats');
+    const chartsData = await fetchData('/arayuz/charts');
+
+    if (!statsData || !chartsData) {
+        console.error('API verileri alınamadı.');
+        return;
+    }
+
+    document.getElementById('total-sales').innerHTML = statsData.toplam_satis;
+    document.getElementById('net-sales').innerHTML = statsData.net_satis;
+    document.getElementById('total-returns').innerHTML = statsData.toplam_iade;
+
+    const monthsOrder = ['ocak', 'şubat', 'mart', 'nisan', 'mayıs', 'haziran', 'temmuz', 'agustos', 'eylül', 'ekim', 'kasım', 'aralık'];
+
+    // Satış verileri
+    const sortedSalesData = monthsOrder.map(month => {
+        const found = chartsData.find(item => item.ay === month);
+        return found ? [found.ay, Number(found.net_satis), Number(found.toplam_satis)] : [month, 0, 0];
+    });
+
+    const salesData = google.visualization.arrayToDataTable([
+        ['Aylar', 'Net Satış', 'Toplam Satış'],
+        ...sortedSalesData
+    ]);
+
+    const salesOptions = {
+        title: '2023-2024 Aylara Göre Toplam Ve Net Satış Sayısı',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        backgroundColor: { fill: 'transparent' },
+        hAxis: {
+            slantedText: true,
+            slantedTextAngle: 45
+        },
+        vAxis: { title: 'Satış Miktarı' },
+        series: {
+            0: { color: '#F06292' }, 
+            1: { color: '#00ACC1' }
+        }
+    };
+
+    const salesChart = new google.visualization.LineChart(document.getElementById('sales_chart'));
+    salesChart.draw(salesData, salesOptions);
+
+    // İade verileri
+    const sortedReturnData = monthsOrder.map(month => {
+        const found = chartsData.find(item => item.ay === month);
+        return found ? [found.ay, Number(found.toplam_iade)] : [month, 0];
+    });
+
+    const returnData = google.visualization.arrayToDataTable([
+        ['Aylar', 'Toplam İade Sayısı'],
+        ...sortedReturnData
+    ]);
+
+    const returnOptions = {
+        title: '2023-2024 Aylara Göre Toplam İade Sayısı',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        backgroundColor: { fill: 'transparent' },
+        hAxis: {
+            slantedText: true,
+            slantedTextAngle: 45
+        },
+        vAxis: { title: 'İade Sayısı' },
+        series: {
+            0: { color: '#607D8B' }
+        }
+    };
+
+    const returnChart = new google.visualization.LineChart(document.getElementById('return_chart'));
+    returnChart.draw(returnData, returnOptions);
+}
+
+        google.charts.setOnLoadCallback(drawCharts);
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="byshoes.jpg" alt="Logo">
+        </div>
+        <div class="admin-profile">
+            <img src="profil.jpeg" alt="Yönetici Profil Resmi" class="profile-pic">
+            <p class="admin-name">Beyza Meriç</p>
+        </div>
+        <hr class="divider">
+        <ul>
+            <li><a href="arayuz.html"><i class="fas fa-home"></i> ANASAYFA</a></li>
+            <li><a href="urunler.html"><i class="fas fa-box"></i> ÜRÜNLER</a></li>
+            <li><a href="iadeler.html"><i class="fas fa-undo"></i> İADELER</a></li>
+            <li><a href="satışlar.html"><i class="fas fa-dollar-sign"></i> SATIŞLAR</a></li>
+        </ul>
+        <a href="giris.html" class="logout-btn">Çıkış Yap</a>
+    </div>
+
+    <div class="main-content">
+        <div class="stats">
+            <div class="card">
+                <i class="fas fa-shopping-cart icon"></i>
+                <h3 id="total-sales">--</h3>
+                <p>Toplam Satış</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-coins icon"></i>
+                <h3 id="net-sales">--</h3>
+                <p>Net Satış</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-exchange-alt"></i>
+                <h3 id="total-returns">--</h3>
+                <p>İade Edilen</p>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart" id="sales_chart" style="width: 1000px; height: 390px;"></div>
+            <div class="chart" id="return_chart" style="width: 1000px; height: 390px;"></div>
+        </div>
+    </div>
+</body>
+</html>
