@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// Dinamik Kart Verileri
+// Dinamik Kart Verileri Apı
 router.get('/stats', (req, res) => {
     const query = `
      SELECT 
@@ -19,7 +19,7 @@ router.get('/stats', (req, res) => {
     });
 });
 
-// Dinamik Grafik Verileri
+// Dinamik Grafik Verileri Apı
 router.get('/charts', (req, res) => {
     const query = `
     SELECT 
