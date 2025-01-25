@@ -58,6 +58,7 @@ router.get('/returns-summary', (req, res) => {
         }
     });
 });
+//Tahmini iade oranı API
 router.get('/returns-prediction-summary', (req, res) => {
     const query = `
         SELECT 
@@ -85,7 +86,7 @@ router.get('/returns-prediction-summary', (req, res) => {
         }
     });
 });
-
+//Yılllık İade API
 router.get('/returns-prediction', (req, res) => {
     const query = `
     SELECT 
@@ -116,7 +117,7 @@ router.get('/returns-prediction', (req, res) => {
         }
     });
 });
-
+//Yıllara göre aylık iade oranları API
 router.get('/monthly-returns/:year', (req, res) => {
     const year = req.params.year; // Dinamik yıl parametresi
     let query = '';
