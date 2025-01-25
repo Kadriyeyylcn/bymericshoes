@@ -61,6 +61,7 @@ ORDER BY toplam_satis DESC;
     }
   });
 });
+//Tablo verisi için ikinci API
 router.get('/prediction-table', (req, res) => {
   const query = `
     SELECT 
@@ -99,7 +100,7 @@ router.get('/prediction-table', (req, res) => {
     }
   });
 });
-
+//Maliyet Grafiği için API
 router.get('/revenue-prediction', (req, res) => {
   const query = ` 
       SELECT
