@@ -1,4 +1,4 @@
-/* Genel ayarlar */
+
 body {
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #ffe3e3, #ffe1e1);
@@ -13,7 +13,6 @@ body {
     margin: 0;
 }
 
-/* Login kutusunun ayarları */
 .login-container {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
@@ -28,7 +27,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Form ayarları */
 form input {
     width: 100%;
     padding: 5px;
